@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "habit_users",
+  "info": {
+    "singularName": "habit-user",
+    "pluralName": "habit-users",
+    "displayName": "HabitUser"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "habit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::habit.habit"
+    }
+  }
+}
