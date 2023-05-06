@@ -7,7 +7,7 @@
 module.exports = {
   list: async (ctx, next) => {
     try {
-
+      //TODO implementar a busca Random
       const entries = await strapi.entityService.findMany(
         "api::question.question",
         {
