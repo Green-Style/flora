@@ -4,6 +4,20 @@
  * A set of functions called "actions" for `reports`
  */
 
+async function calcQtyCo2ByFormId(formId) {
+  const [{ qtyCo2 }] = await strapi.db.connection.raw(
+    `
+    SELECT SUM(options.value) AS qtyCo2 FROM answers
+      JOIN answers_form_links ON answers_form_links.answer_id = answers.id
+      JOIN answers_option_links ON answers_option_links.answer_id = answers.id
+      JOIN options ON answers_option_links.option_id = options.id
+    WHERE answers_form_links.form_id = ?;
+    `, [formId]
+  )
+
+  return qtyCo2
+}
+
 module.exports = {
   myCoInfo: async (ctx, next) => {
     try {
@@ -19,15 +33,7 @@ module.exports = {
         }
       );
 
-      const [{ qtyCo2 }] = await strapi.db.connection.raw(
-        `
-        SELECT SUM(options.value) AS qtyCo2 FROM answers
-          JOIN answers_form_links ON answers_form_links.answer_id = answers.id
-          JOIN answers_option_links ON answers_option_links.answer_id = answers.id
-          JOIN options ON answers_option_links.option_id = options.id
-        WHERE answers_form_links.form_id = ?;
-        `, [form.id]
-      )
+      const qtyCo2 = await calcQtyCo2ByFormId(form.id)
 
       const qtyCo2perCategory = await strapi.db.connection.raw(
         `
@@ -55,6 +61,47 @@ module.exports = {
       ctx.body = {
         qtyCo2,
         qtyCo2perCategory
+      }
+    } catch (err) {
+      ctx.body = err;
+    }
+  },
+
+  compareCo: async (ctx, next) => {
+    try {
+      const [firstForm] = await strapi.entityService.findMany(
+        'api::form.form',
+        {
+          filters: {
+            users_permissions_user: ctx.state.user.id
+          },
+          fields: "id",
+          limit: 1,
+          sort: { id: 'asc' }
+        }
+      );
+
+      const [lastForm] = await strapi.entityService.findMany(
+        'api::form.form',
+        {
+          filters: {
+            users_permissions_user: ctx.state.user.id
+          },
+          fields: "id",
+          limit: 1,
+          sort: { id: 'desc' }
+        }
+      );
+
+      const firstQtyCo2 = await calcQtyCo2ByFormId(firstForm.id)
+
+      const lastQtyCo2 = await calcQtyCo2ByFormId(lastForm.id)
+
+
+      ctx.body = {
+        globalQtyCo2: 300,
+        firstQtyCo2: firstQtyCo2 || 0,
+        lastQtyCo2: lastQtyCo2 || 0
       }
     } catch (err) {
       ctx.body = err;

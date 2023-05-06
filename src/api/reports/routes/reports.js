@@ -9,5 +9,14 @@ module.exports = {
         middlewares: [],
       },
     },
+    {
+      method: 'GET',
+      path: '/report/compare-co-two',
+      handler: 'reports.compareCo',
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };
