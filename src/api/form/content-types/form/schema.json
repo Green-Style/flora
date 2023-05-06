@@ -4,7 +4,8 @@
   "info": {
     "singularName": "form",
     "pluralName": "forms",
-    "displayName": "Form"
+    "displayName": "Form",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
