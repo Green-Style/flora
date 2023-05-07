@@ -5,15 +5,15 @@
  */
 
 async function calcQtyCo2ByFormId(formId) {
-  const [{ qtyCo2 }] = await strapi.db.connection.raw(
+  const [{ qtyCo2 }] = (await strapi.db.connection.raw(
     `
-    SELECT SUM(options.value) AS qtyCo2 FROM answers
+    SELECT SUM(options.value) AS "qtyCo2" FROM answers
       JOIN answers_form_links ON answers_form_links.answer_id = answers.id
       JOIN answers_option_links ON answers_option_links.answer_id = answers.id
       JOIN options ON answers_option_links.option_id = options.id
     WHERE answers_form_links.form_id = ?;
     `, [formId]
-  )
+  )).rows
 
   return qtyCo2
 }
@@ -35,12 +35,12 @@ module.exports = {
 
       const qtyCo2 = await calcQtyCo2ByFormId(form.id)
 
-      const qtyCo2perCategory = await strapi.db.connection.raw(
+      const qtyCo2perCategory = (await strapi.db.connection.raw(
         `
         SELECT 
             categories.id AS id,
             categories.description AS category,
-            SUM(options.value) AS qtyCo2
+            SUM(options.value) AS "qtyCo2"
         FROM answers
           JOIN answers_form_links ON answers_form_links.answer_id = answers.id
           JOIN answers_option_links ON answers_option_links.answer_id = answers.id
@@ -52,7 +52,7 @@ module.exports = {
         WHERE answers_form_links.form_id = ?
         GROUP BY categories.id;
         `, [form.id]
-      )
+      )).rows
 
       qtyCo2perCategory.forEach(category => {
         category.percentage = Math.round(category.qtyCo2 * 100 / qtyCo2)

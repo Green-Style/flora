@@ -20,7 +20,7 @@ async function findRandomQuestionsByCategoryId(categoryId) {
       LIMIT ?;
       `, [categoryId, QTY_QUESTIONS_PER_CATEGORY]
     )
-  ).map(question => question.id)
+  ).rows.map(question => question.id)
 
   const questions = await strapi.entityService.findMany(
     "api::question.question",
