@@ -58,7 +58,25 @@ module.exports = {
         category.percentage = Math.round(category.qtyCo2 * 100 / qtyCo2)
       })
 
+      const [{ suggestion }] = (await strapi.db.connection.raw(
+        `
+        SELECT 
+          suggestions.description  AS suggestion
+        FROM answers
+          JOIN answers_form_links ON answers_form_links.answer_id = answers.id
+          JOIN answers_option_links ON answers_option_links.answer_id = answers.id
+          JOIN options ON options.id = answers_option_links.option_id
+          JOIN options_habit_links ON options_habit_links.option_id = options.id
+          JOIN suggestions_habit_links ON suggestions_habit_links.habit_id = options_habit_links.habit_id
+          JOIN suggestions ON suggestions.id = suggestions_habit_links.suggestion_id
+        WHERE answers_form_links.form_id = ?
+        ORDER BY RANDOM()
+        LIMIT 1;
+        `, [form.id]
+      )).rows
+
       ctx.body = {
+        suggestion,
         qtyCo2,
         qtyCo2perCategory
       }
