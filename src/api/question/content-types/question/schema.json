@@ -15,16 +15,16 @@
     "Text": {
       "type": "text"
     },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category"
+    },
     "options": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::option.option",
       "mappedBy": "question"
-    },
-    "category": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::category.category"
     }
   }
 }

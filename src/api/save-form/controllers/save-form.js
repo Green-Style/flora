@@ -7,20 +7,10 @@
 module.exports = {
   create: async (ctx, next) => {
     try {
-      //TODO Coletar respostas via BODY do request
+      const { body: answersInput } = ctx.request
 
       const now = new Date()
 
-      const inputs = [
-        {
-          question: 3,
-          option: 1
-        },
-        {
-          question: 1,
-          option: 2
-        },
-      ]
 
       const form = await strapi.entityService.create('api::form.form',
         {
@@ -33,11 +23,11 @@ module.exports = {
         answers: []
       }
 
-      for (const input of inputs) {
+      for (const answerInput of answersInput) {
         const answer = await strapi.entityService.create('api::answer.answer',
           {
             data: {
-              ...input,
+              ...answerInput,
               form: form.id,
               publishedAt: now
             }
