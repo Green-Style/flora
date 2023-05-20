@@ -117,7 +117,7 @@ module.exports = {
 
 
       ctx.body = {
-        globalQtyCo2: 300,
+        globalQtyCo2: 296.48,
         firstQtyCo2: firstQtyCo2 || 0,
         lastQtyCo2: lastQtyCo2 || 0
       }
