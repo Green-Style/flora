@@ -14,7 +14,7 @@ passwordForm.addEventListener("submit", (e) => {
   }
 
   axios
-    .post("http://localhost:1337/api/auth/reset-password", {
+    .post("http://greenstyle.brazilsouth.cloudapp.azure.com:1337/api/auth/reset-password", {
       passwordConfirmation: confirmPassword,
       password: password,
       code: code,
